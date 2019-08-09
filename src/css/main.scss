@@ -1,0 +1,207 @@
+@import "./theme.scss";
+
+//公共样式
+page {
+    width: 100%;
+    min-height: 100%;
+}
+
+image {
+    width: 100%;
+}
+
+//主容器
+.container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    background-color: $main-background-color;
+    color: $main-text-color;
+}
+
+//水平布局容器
+.landscape_container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    color: $main-text-color;
+}
+
+//背景色
+.background {
+    &_main {
+        background-color: $main-background-color !important;
+    }
+
+    &_gray {
+        background-color: #f2f2f2 !important;
+    }
+}
+
+//字体大小颜色
+.text {
+    &_main {
+        font-size: 30rpx !important;
+        color: $main-text-color !important;
+    }
+
+    &_desc {
+        font-size: 30rpx !important;
+        color: $desc-text-color !important;
+    }
+
+    &_gray {
+        font-size: 30rpx !important;
+        color: $gray-text-color !important;
+    }
+}
+
+//字体大小
+.text {
+    &_normal {
+        font-size: 30rpx !important;
+    }
+
+    &_middle {
+        font-size: 32rpx !important;
+    }
+
+    &_big {
+        font-size: 40rpx !important;
+    }
+
+    &_small {
+        font-size: 28rpx !important;
+    }
+}
+
+
+//边留空 padding
+.blank {
+    &_top {
+        padding: none;
+        padding-top: $border-blank-size;
+    }
+
+    &_bottom {
+        padding: none;
+        padding-bottom: $border-blank-size;
+    }
+
+    &_left {
+        padding: none;
+        padding-left: $border-blank-size;
+    }
+
+    &_right {
+        padding: none;
+        padding-right: $border-blank-size;
+    }
+
+    &_top_bottom {
+        padding: none;
+        padding: $border-blank-size 0;
+    }
+
+    &_left_right {
+        padding: none;
+        padding: 0 $border-blank-size;
+    }
+
+    & {
+        padding: $border-blank-size;
+    }
+}
+
+//空白间隙
+.space {
+    &_top {
+        margin: none;
+        margin-top: $border-blank-size;
+    }
+
+    &_bottom {
+        margin: none;
+        margin-bottom: $border-blank-size;
+    }
+
+    &_left {
+        margin: none;
+        margin-left: $border-blank-size;
+    }
+
+    &_right {
+        margin: none;
+        margin-right: $border-blank-size;
+    }
+
+    &_top_bottom {
+        margin: none;
+        margin: $border-blank-size 0;
+    }
+
+    &_left_right {
+        margin: none;
+        margin: 0 $border-blank-size;
+    }
+
+    & {
+        margin: $border-blank-size;
+    }
+}
+
+//边框
+.border {
+    &_top {
+        border: none;
+        border-top: 2rpx solid $main-border-color;
+    }
+
+    &_bottom {
+        border: none;
+        border-bottom: 2rpx solid $main-border-color;
+    }
+
+    &_left {
+        border: none;
+        border-left: 2rpx solid $main-border-color;
+    }
+
+    &_right {
+        border: none;
+        border-right: 2rpx solid $main-border-color;
+    }
+
+    &_top_bottom {
+        border: none;
+        border-top: 2rpx solid $main-border-color;
+        border-bottom: 2rpx solid $main-border-color;
+    }
+
+    &_left_right {
+        border: none;
+        border-left: 2rpx solid $main-border-color;
+        border-right: 2rpx solid $main-border-color;
+    }
+
+    & {
+        border: 2rpx solid $main-border-color;
+    }
+}
+
+//公共组件
+//弹出层
+.popup_box {
+    box-sizing: border-box;
+    width: 100%;
+    background-color: $main-background-color;
+    border-radius: 10rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+}

@@ -1,0 +1,143 @@
+<script>
+import {Page} from '@wxa/core'
+
+@Page
+export default class Detail{
+    data={
+        privateInfo:{
+            'avatar':'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=2977845769,3052488187&fm=27&gp=0.jpg',
+            'name':'杜牧',
+            'num':4,
+            'followed':false,
+            'follow_icon_type':'md-star-outline',
+            'userId':128
+        },
+        postInfo:{}
+    }
+    onLoad(options){
+        let post={};
+        let i=options.postId;
+        post.id=i;
+        post.images=[{
+                'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1704031805.jpg'
+            },
+            {
+                'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1705108400.jpg'
+            },
+            {
+                'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1704031805.jpg'
+            },
+            {
+                'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1707265824.jpg'
+            }];
+        post.title="夕阳无限好";
+        post.like=100+i;
+        post.comment=70+i;
+        post.follow=47+i;
+        post.forward=14+i;
+        post.liked=false;
+        post.heartType=post.liked?'md-heart':'md-heart-empty';
+        post.comments=[
+                'LIli：好可爱的小短腿。',
+                '明天：带出门好欢乐。',
+                'lucy:甩开膀子迈开步。'
+            ];
+        this.setData({
+            postInfo:post
+        })
+        
+    }
+
+    onToggleFollow(e){
+        let pi=this.data.privateInfo;
+        pi.followed=!pi.followed;
+        pi.follow_icon_type=pi.followed?'md-star':'md-star-outline';
+        this.setData({
+            privateInfo:pi
+        });
+    }
+    onGotoPersonal(){
+        this.$router.push("./personal?userId="+this.data.privateInfo.userId);
+    }
+}
+</script>
+<config>
+{
+    "navigationBarTitleText":"爱宠圈",
+    "usingComponents":{
+        "wux-avatar": "../../wux-weapp/dist/avatar/index",
+        "wux-icon": "../../wux-weapp/dist/icon/index",
+        "comment-image":"../../components/commentImage/index"
+    }
+}
+</config>
+<template>
+<view class="container">
+    <view class="landscape_container space_top space_right">
+        <view class="landscape_container owner_info">
+            <wux-avatar src="{{privateInfo.avatar}}" shape="circle" bindtap="onGotoPersonal"/>
+            <text class="owner_name">{{privateInfo.name}}</text>
+            <text class="space_left">(共发布{{privateInfo.num}}张图片)</text>
+        </view>
+        <view class="landscape_container pull_right" bindtap="onToggleFollow">
+            <wux-icon type="{{privateInfo.follow_icon_type}}" size="20"/>
+            <text>关注</text>
+        </view>
+    </view>
+    <comment-image postInfo={{postInfo}} class="content space_top">
+        <view class="post_head" slot="header">
+            <view class="left text_desc space_left">{{postInfo.title}}</view>
+        </view>
+        <view class="post_comments space_top text_desc" slot="footer_comments">
+            <block wx:for={{postInfo.comments}} wx:for-item="comment" wx:key="*this">
+                <text>{{comment}}</text>
+            </block>
+        </view>
+    </comment-image>
+     <input class="input_area" type="text" placeholder="说出你的想法"/>
+</view>
+</template>
+<style lang="scss">
+@import "../../css/theme";
+@import "../../css/main";
+.owner_info{
+    flex:1 1 auto;
+    .owner_name{
+        margin-left:20rpx;
+        font-weight: bold;
+    }
+    .pull_right{
+        flex:0 0 auto;
+    }
+}
+.post_head{
+    display:flex;
+    flex-direction: row;
+    align-items:flex_end;
+    .left{
+        flex:1 1 auto;
+    }
+    .right{
+        flex:0 0 auto;
+        font-size:32rpx;
+        color:$alert_color;
+    }
+}
+.post_comments{
+    display:flex;
+    flex-direction:column;
+}
+.content{
+    margin-bottom:100rpx;
+}
+.input_area{
+    position:fixed;
+    z-index: 10;
+    box-sizing:border-box;
+    border:1px solid black;
+    bottom:0;
+    width:100%;
+    height:80rpx;
+    background: #fff;
+}
+</style>

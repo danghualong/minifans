@@ -1,0 +1,170 @@
+<script>
+import {Page} from "@wxa/core"
+import {mock as mockData} from "./mockdata"
+
+@Page
+export default class Index{
+    data = {
+        subjects:mockData.subjects,
+        tabs:[
+            {
+                "title":"推荐",
+                "typeIndex":1
+            },
+            {
+                "title":"猫咪",
+                "typeIndex":2
+            },
+            {
+                "title":"狗狗",
+                "typeIndex":3
+            },
+            {
+                "title":"其他宠物",
+                "typeIndex":4
+            },
+            {
+                "title":"最新",
+                "typeIndex":5
+            },
+            {
+                "title":"已关注",
+                "typeIndex":6
+            },
+            {
+                "title":"我的",
+                "typeIndex":7
+            }
+        ],
+        currentTabKey:2,
+        postInfos:mockData.postInfos
+    }
+    onLoad() {
+    }
+    onTabChanged(e){
+        let key=e.detail.key;
+        this.setData({
+            currentTabKey:key
+        });
+        if(key==7){
+            this.$router.push("./personal?userId=130");
+        }
+    }
+
+    gotoSubject(e){
+        let subjectId=e.currentTarget.dataset.subjectId;
+        this.$router.push("./hot_subject?subjectId="+subjectId);
+    }
+
+    onGetPostDetails(e){
+        this.$router.push("./detail?postId="+e.detail.postId);
+    }
+
+}
+</script>
+<config>
+{
+    "navigationBarTitleText": "爱宠圈",
+    "usingComponents": {
+        "wux-tabs": "../../wux-weapp/dist/tabs/index",
+        "wux-tab": "../../wux-weapp/dist/tab/index",
+        "wux-icon": "../../wux-weapp/dist/icon/index",
+        "comment-image":"../../components/commentImage/index"
+     }
+}
+</config>
+<template>
+    <view class="container">
+        <view class="title text_main space_left">热门话题1</view>
+        <scroll-view scroll-x>
+            <view class="subject_container">
+                <block wx:for={{subjects}} wx:key="subjectId">
+                    <view class="scroll_view_item space_left space_right" data-subject-id={{item.subjectId}} bindtap="gotoSubject">
+                        <image src="{{item.imgUrl}}" mode="aspectFill"/>
+                        <view class="subject">{{item.title}}</view>
+                    </view>
+                </block>
+            </view>
+        </scroll-view>
+        <view class="space_top">
+            <wux-tabs defaultCurrent="{{currentTabKey}}" theme="positive"
+            bindchange="onTabChanged">
+                <block wx:for={{tabs}} wx:key={{typeIndex}}>
+                    <wux-tab wx:if="{{item.typeIndex==currentTabKey}}" key="{{item.typeIndex}}">
+                        <view class="text_main active">{{item.title}}</view>
+                    </wux-tab>
+
+                    <wux-tab wx:else key="{{item.typeIndex}}">
+                        <view class="text_main">{{item.title}}</view>
+                    </wux-tab>
+                </block>
+            </wux-tabs>
+        </view>
+        <block wx:for={{postInfos}} wx:key="id">
+            <comment-image postInfo={{item}} bind:showPostDetailEvent="onGetPostDetails">
+                <view slot="footer" class="space_left">{{item.title}}</view>
+            </comment-image>
+        </block>
+    </view>
+</template>
+<style lang="scss">
+@import "../../css/theme";
+
+$titleHeight:80rpx;
+.title{
+    width:100%;
+    height: $titleHeight;
+    line-height: $titleHeight;
+    background-color:$main-border-color;
+}
+.subject_container{
+    display: flex;
+    flex-direction: row;
+    height:400rpx;
+    .scroll_view_item{
+        display: flex;
+        flex-direction: column;
+        flex:1 0 auto;
+        align-items:center;
+        width:400rpx;
+        .subject{
+            margin-top: -80rpx;
+            width: 100%;
+            height:50rpx;
+            font-weight: bold;
+            text-align:center; 
+            background-color:#9ca2a1;
+        }
+    }
+    
+}
+.images{
+    display:flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    .actions{
+        display:flex;
+        flex-direction: row;
+        .icon_text{
+            display:inline-block;
+            line-height:40rpx;
+        }
+    }
+    .box{
+        display:flex;
+        flex-direction: column;
+        width:100%;
+        .block{
+            display:inline-block;
+            line-height:40rpx;
+            width:40rpx;
+            height:40rpx;
+            margin-left:20rpx;
+        }
+    }
+}
+.active{
+    font-weight: bold;
+}
+
+</style>

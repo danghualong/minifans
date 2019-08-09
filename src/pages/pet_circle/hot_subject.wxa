@@ -1,0 +1,215 @@
+<script>
+import {Page} from "@wxa/core"
+import {mock as mockData} from "./mockdata"
+
+@Page
+export default class HotSubject{
+    data={
+        subjectInfo:{},
+        postInfos:[]
+    };
+    onLoad(options){
+        let subjectId=options.subjectId;
+        let subjectInfo=this.getSubjectInfo(subjectId);
+        let imgs=this.getImages(subjectId);
+        this.setData({
+            subjectInfo:subjectInfo,
+            postInfos:imgs
+        });
+    }
+    getSubjectInfo(subjectId){
+        let subjects=mockData.subjects;
+        let item={
+            'subjectId':subjectId,
+            'statistic':'15个用户参与,共有102个图片'
+            };
+        let subject=subjects.find(p=>p.subjectId==subjectId);
+        item.imgUrl=subject.imgUrl;
+        item.title=subject.title;
+        return item;
+    }
+    getImages(subjectId){
+        let postInfos=[
+            {
+                'id':1,
+                'images':[{
+                    'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1704031805.jpg'
+                }],
+                'title':'夕阳无限好',
+                'like':100,
+                'comment':72,
+                'follow':47,
+                'forward':14,
+                'liked':false,
+                'heartType':'md-heart-empty',
+                'userId':128,
+                'userName':'李商隐',
+                'avatar':'https://www.dxsbb.com/upFiles/infoImg/2015010236158453.jpg',
+                'imgNumDesc':'(共有10张图片)'
+            },
+            {
+                'id':2,
+                'images':[{
+                    'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1705108400.jpg'
+                }],
+                'title':'沧海月明珠有泪',
+                'like':100,
+                'comment':72,
+                'follow':47,
+                'forward':14,
+                'liked':false,
+                'heartType':'md-heart-empty',
+                'userId':1,
+                'userName':'杜牧',
+                'avatar':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1704031805.jpg',
+                'imgNumDesc':'(共有11张图片)'
+            },
+            {
+                'id':3,
+                'images':[{
+                    'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1707265824.jpg'
+                }],
+                'title':'心有灵犀一点通',
+                'like':100,
+                'comment':72,
+                'follow':47,
+                'forward':14,
+                'liked':false,
+                'heartType':'md-heart-empty',
+                'userId':1,
+                'userName':'李商隐',
+                'avatar':'https://n.sinaimg.cn/sports/330/w198h132/20190627/40e4-hyzpvir2913201.jpg',
+                'imgNumDesc':'(共有12张图片)'
+            },
+            {
+                'id':4,
+                'images':[{
+                    'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1704031805.jpg'
+                }],
+                'title':'夕阳无限好',
+                'like':100,
+                'comment':72,
+                'follow':47,
+                'forward':14,
+                'liked':true,
+                'heartType':'md-heart',
+                'userId':1,
+                'userName':'李商隐',
+                'avatar':'https://n.sinaimg.cn/sports/330/w198h132/20190627/40e4-hyzpvir2913201.jpg',
+                'imgNumDesc':'(共有9张图片)'
+            },
+            {
+                'id':5,
+                'images':[{
+                    'imgUrl':'http://oss10.damaicn.cn/xingquanpet_com/20190128/1707265824.jpg'
+                }],
+                'title':'此情可待成追忆',
+                'like':9,
+                'comment':72,
+                'follow':47,
+                'forward':14,
+                'liked':true,
+                'heartType':'md-heart',
+                'userId':1,
+                'userName':'李商隐',
+                'avatar':'https://n.sinaimg.cn/sports/330/w198h132/20190627/40e4-hyzpvir2913201.jpg',
+                'imgNumDesc':'(共有7张图片)'
+            },
+        ];
+        return postInfos;
+    }
+    onGotoPersonal(e){
+        let userId=e.currentTarget.dataset.id;
+        this.$router.push("./personal?userId="+userId);
+    }
+}
+</script>
+<config>
+{
+    "navigationBarTitleText":"爱宠圈",
+    "usingComponents":{
+        "wux-avatar": "../../wux-weapp/dist/avatar/index",
+        "wux-icon": "../../wux-weapp/dist/icon/index",
+        "comment-image":"../../components/commentImage/index"
+    }
+}
+</config>
+<template>
+<view class="container">
+    <view class="subject_info">
+        <image src="{{subjectInfo.imgUrl}}" mode="aspectFill"/>
+        <view class="subject">{{subjectInfo.title}}</view>
+        <view class="statistic">{{subjectInfo.statistic}}</view>
+    </view>
+    <block wx:for={{postInfos}} wx:key="id">
+        <view class="owner_info space_top">
+            <wux-avatar src="{{item.avatar}}" shape="circle" data-id={{item.userId}} bindtap="onGotoPersonal"/>
+            <text class="owner_name">{{item.userName}}</text>
+            <text class="space_left">{{item.imgNumDesc}}</text>
+        </view>
+        <comment-image postInfo={{item}}>
+            <view slot="footer" class="space_left">{{item.title}}</view>
+        </comment-image>
+    </block>
+</view>
+</template>
+<style lang="scss">
+@import "../../css/theme";
+
+.subject_info{
+    display: flex;
+    flex-direction: column;
+    height:400rpx;
+    width:100%;
+    .subject{
+        margin-top: -120rpx;
+        padding-left:20rpx;
+        width: 100%;
+        height:50rpx;
+        font-weight: bold;
+        color:white;
+        background-color:#9ca2a1;
+    }
+    .statistic{
+        margin-top:20rpx;
+        margin-left:20rpx;
+        height:50rpx;
+        color:white;
+    }
+}
+
+.owner_info{
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    .owner_name{
+        margin-left:20rpx;
+        font-weight: bold;
+    }
+}
+.images{
+    display:flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    .actions{
+        display:flex;
+        flex-direction: row;
+        .icon_text{
+            display:inline-block;
+            line-height:40rpx;
+        }
+    }
+    .box{
+        display:flex;
+        flex-direction: column;
+        width:100%;
+        .block{
+            display:inline-block;
+            line-height:40rpx;
+            width:40rpx;
+            height:40rpx;
+            margin-left:20rpx;
+        }
+    }
+}
+</style>

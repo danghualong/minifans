@@ -1,0 +1,197 @@
+<script>
+import {Eventbus} from "@wxa/core";
+@Eventbus
+export default class Index {
+    externalClasses = ["text_class"];
+    properties = {
+        appointment:{
+            type:Object,
+            value:{}
+        },
+        isSummary:{
+            type:Boolean,
+            value:true
+        }
+    };
+    data={
+        cancelAppointmentCls:'invisible',
+        editAppointmentCls:'invisible',
+        alertConfirmCls:'invisible',
+        appointAgainCls:'invisible',
+        evaluateCls:'invisible',
+    };
+
+    ready(){
+        let stateId=this.data.appointment.stateId;
+        if(stateId==1){
+            this.setData({
+                cancelAppointmentCls:"visible",
+                editAppointmentCls:'visible',
+                alertConfirmCls:'visible'
+            });
+        }else if(stateId==2){
+            this.setData({
+                cancelAppointmentCls:"visible",
+                editAppointmentCls:'visible'
+            });
+        }else if(stateId==3){
+            this.setData({
+                appointAgainCls:"visible",
+                evaluateCls:'visible'
+            });
+        }else{
+            this.setData({
+                appointAgainCls:"visible"
+            });
+        } 
+    }
+    //显示详细信息
+    onShowDetail(e){
+        this.triggerEvent('showAppointmentDetailEvent',{'id':this.data.appointment.id});
+    }
+    //修改预约时间
+    onChangeTime(e){
+        this.triggerEvent('changeAppointedTimeEvent',{'appointment':this.data.appointment});
+    }
+    //取消预约
+    onCancelAppointment(e){
+        this.triggerEvent('cancelAppointmentEvent',{'appointment':this.data.appointment});
+    }
+    //提醒门店确认
+    onAlertToConfirm(e){
+        //发送一条消息
+    }
+    //再次预约
+    onAppointAgain(e){
+        this.triggerEvent('appointAgainEvent',{'appointment':this.data.appointment});
+    }
+    //去评价
+    onEvaluateAppointment(e){
+        this.triggerEvent('evaluateAppointmentEvent',{'appointment':this.data.appointment});
+    }
+    
+    getCurrentItems(appointmentId=0){
+        let items=[
+                {
+                    'itemId':1,
+                    'typeId':1,
+                    'itemName':'美容'
+                },
+                {
+                    'itemId':2,
+                    'typeId':1,
+                    'itemName':'洗澡'
+                },
+                {
+                    'itemId':3,
+                    'typeId':2,
+                    'itemName':'疫苗'
+                },
+            ];
+            return items;
+    }
+}
+</script>
+
+<config>
+{
+    "component": true,
+    "usingComponents":{
+      "wux-icon": "../../wux-weapp/dist/icon/index",
+      "wux-button": "../../wux-weapp/dist/button/index"
+    }
+}
+</config>
+
+<template>
+<view class="comp_container space_top">
+    <view wx:if={{isSummary}} class="landscape_container">
+        <view class="space_left fill">
+            <view class="text_desc">门店:{{appointment.hospitalName}}</view>
+            <view class="text_small text_gray">预约编号:{{appointment.appointmentCode}}</view>
+        </view>
+        <view class="space_right text_middle wux-balanced">
+            {{appointment.stateName}}
+        </view>
+    </view>
+    <view wx:else class="landscape_container">
+        <view class="space_left fill">
+            <view wx:if="{{appointment.stateId==1}}" class="text_desc"><span class="text_big wux-balanced">{{appointment.stateName}}--</span>等待门店确认预约</view>
+            <view wx:elif="{{appointment.stateId==2}}" class="text_desc"><span class="text_big wux-balanced">{{appointment.stateName}}--预约码:{{appointment.appCode}}</span>(到店使用)</view>
+            <view wx:elif="{{appointment.stateId==5}}" class="text_desc text_big">{{appointment.stateName}}</view>
+            <view wx:else class="text_desc"><span class="text_big wux-balanced">{{appointment.stateName}}</span></view>
+            <view class="text_small text_gray">会员手机号:{{appointment.phoneNum}}</view>
+        </view>
+    </view>
+    <view class="app_items">
+        <block wx:for={{appointment.items}} wx:key="productId">
+            <view class="landscape_container background_gray sep">
+                <image wx:if={{item.imgUrl}} class="img space_left space_right" src={{item.imgUrl}}
+                mode="aspectFill">
+                </image>
+                <view class="fill space_left text_desc">{{item.productName}}</view>
+                <view class="space_right text_desc">X {{item.count}}</view>
+            </view>
+        </block>
+    </view>
+    <view wx:if={{isSummary}} class="space_top wux-text--center text_normal wux-calm" bindtap="onShowDetail">查看全部预约项</view>
+    <view class="show_time text_desc">预约时间:{{appointment.startTimeDesc}}</view>
+    <view class="actions space_top space_right space_bottom">
+        <wux-button class="space_left {{cancelAppointmentCls}}" type="balanced" outline size="small" bind:click="onCancelAppointment">取消预约</wux-button> 
+        <wux-button class="space_left {{editAppointmentCls}}" type="balanced" outline size="small" bind:click="onChangeTime">修改预约时间</wux-button> 
+        <wux-button class="space_left {{alertConfirmCls}}" type="balanced" outline size="small" bind:click="onAlertToConfirm">提醒门店确认</wux-button> 
+        <!-- <wux-button class="space_left {{appointAgainCls}}" type="balanced" outline size="small">确认已使用</wux-button> -->
+        <wux-button class="space_left {{appointAgainCls}}" type="balanced" outline size="small" bind:click="onAppointAgain">再次预约</wux-button> 
+        <wux-button class="space_left {{evaluateCls}}" type="balanced" outline size="small" bind:click="onEvaluateAppointment">去评价</wux-button>  
+    </view>
+    <view wx:if={{!isSummary}} class="space_top space_left">
+        <view class="text_desc">门店:{{appointment.hospitalName}}</view>
+        <view class="text_small text_gray">预约编号:{{appointment.appointmentCode}}</view>
+        <view class="text_small text_gray">提交预约:{{appointment.commitTime}}</view>
+    </view>
+</view>
+</template>
+
+<style lang="scss">
+@import '../../wux-weapp/dist/styles/index.wxss';
+@import "../../css/main.scss";
+.comp_container{
+    display:flex;
+    flex-direction:column;
+    background-color:#fff;
+}
+.fill{
+    flex:1 1 auto;
+}
+.app_items{
+    .sep{
+        align-items:center;
+        margin-top:5rpx;
+        height:140rpx;
+    }
+    .img{
+        width:120rpx;
+        height:120rpx;
+    }
+}
+.show_time{
+    margin-top:10rpx;
+    border-top:2rpx solid lightgray;
+    border-bottom:2rpx solid lightgray;
+    padding-left:20rpx;
+    padding-top:20rpx;
+    padding-bottom:20rpx;
+}
+.invisible{
+    display:none;
+    visibility: collapse;
+}
+.visible{
+    visibility:visible;
+}
+.actions{
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+</style>

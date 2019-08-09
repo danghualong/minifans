@@ -1,0 +1,27 @@
+<script>
+import { Page } from "@wxa/core";
+
+@Page
+export default class Center {
+  data = {};
+
+  onLoad() {}
+}
+</script>
+
+<config>
+{
+    "navigationBarTitleText": "个人中心",
+    "usingComponents": {
+         "wux-button": "../wux-weapp/dist/button/index"
+     }
+}
+</config>
+
+<template>
+  <view class="container"></view>
+</template>
+
+<style lang="scss">
+
+</style>

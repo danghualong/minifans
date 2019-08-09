@@ -1,0 +1,152 @@
+<script>
+import { Page } from "@wxa/core";
+import {appointments,states} from "./data"
+import { $startWuxRefresher, $stopWuxRefresher, $stopWuxLoader } from '../../wux-weapp/dist/index'
+import { $wuxDialog } from '../../wux-weapp/dist/index'
+
+const ITEM_PER_PAGE=5;
+@Page
+export default class AppointmentList {
+  
+  data = {
+    states:null,
+    currentTypeId:0,
+    scrollTop:0,
+    pageIndex:1,
+    appointments:[],
+  };
+
+  onLoad() {
+    states.forEach(p=>{
+      if(p.typeId==0){
+        p.count=appointments.length;
+        return;
+      }
+      let count=0;
+      appointments.forEach(q=>{
+        if(q.stateId==p.typeId){
+          count++;
+        }
+      });
+      p.count=count;
+    });
+    this.setData({
+      states:states
+    });
+    $startWuxRefresher();
+  }
+  
+  onRefreshing(){
+    console.log("onRefreshing");
+  }
+  onRefreshed(){
+    console.log("onRefreshed");
+    let apps=appointments;
+    //重新查询当前页的5条数据
+    this.setData({
+      appointments:apps
+    });
+    $stopWuxRefresher();
+  }
+  onLoadMore(){
+    //查询下5条数据
+  }
+
+  onShowDetail(e){
+    this.$router.push("/pages/appointment/detail?id="+e.detail.id);
+  }
+  onchangeAppointedTime(e){
+    getApp().globalData.app_appointment=e.detail.appointment;
+    this.$router.push("/pages/appointment/appoint_status?state=edit");
+  }
+  onCancelAppointment(e){
+    $wuxDialog().confirm({
+            resetOnClose: true,
+            closable: true,
+            title: '取消订单',
+            content: '确认要取消订单吗？',
+            onConfirm(t) {
+              //确认删除
+              let appointment=e.detail.appointment;
+              if(appointment){
+                //取消预约
+                appointment.stateId=5;
+                appointment.stateName="已关闭";
+                $startWuxRefresher();
+              }
+            },
+            onCancel(e) {
+                //取消操作
+            },
+        });
+  }
+  onEvaluateAppointment(e){
+    //跳转到评价页面
+  }
+  onAppointAgain(e){
+    getApp().globalData.app_appointment=e.detail.appointment;
+    this.$router.push("/pages/appointment/appoint_status?state=add");
+  }
+
+  onTabChanged(e){
+    let key=e.detail.key;
+    let typedAppointments=appointments;
+    if(key!=0){
+      typedAppointments=appointments.filter(p=>p.stateId==key);
+    }
+    this.setData({
+      currentTypeId:key,
+      appointments:typedAppointments
+    });
+  }
+}
+</script>
+
+<config>
+{
+    "navigationBarTitleText": "预约列表",
+    "usingComponents": {
+      "wux-dialog": "../../wux-weapp/dist/dialog/index",
+      "wux-button": "../../wux-weapp/dist/button/index",
+      "wux-tabs": "../../wux-weapp/dist/tabs/index",
+      "wux-tab": "../../wux-weapp/dist/tab/index",
+      "wux-refresher": "../../wux-weapp/dist/refresher/index",
+      "c-appointment":"../../components/appointment/index"
+     }
+}
+</config>
+
+<template>
+  <view class="container">
+    <wux-dialog id="wux-dialog" />
+    <wux-refresher id="wux-refresher" bind:pulling="onRefreshing" bind:refresh="onRefreshed"
+    bind:loadmore="onLoadMore" scrollTop="{{scrollTop}}">
+      <view class="space_top">
+          <wux-tabs defaultCurrent={{currenTypeId}} theme="positive" bindchange="onTabChanged">
+              <block wx:for={{states}} wx:key="typeId">
+                  <wux-tab key="{{item.typeId}}">
+                      <view class="text_main">{{item.typeName}}({{item.count}})</view>
+                  </wux-tab>
+              </block>
+          </wux-tabs>
+      </view>
+      <view>
+        <block wx:for={{appointments}} wx:key="id">
+          <c-appointment appointment={{item}} bind:showAppointmentDetailEvent="onShowDetail"
+          bind:changeAppointedTimeEvent="onchangeAppointedTime"
+          bind:cancelAppointmentEvent="onCancelAppointment"
+          bind:evaluateAppointmentEvent="onEvaluateAppointment"
+          bind:appointAgainEvent="onAppointAgain"/>
+        </block>
+      </view>
+    </wux-refresher>
+  </view>
+</template>
+
+<style lang="scss">
+@import '../../wux-weapp/dist/styles/index.wxss';
+@import "../../css/main";
+
+
+
+</style>

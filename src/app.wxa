@@ -1,0 +1,101 @@
+<script>
+import { wxa, App } from "@wxa/core";
+import { wxaRedux, combineReducers } from "@wxa/redux";
+import watchPlugin from "@wxa/watch";
+import userInfo from "./services/reducers/userInfo.js";
+import location from "./services/reducers/location.js";
+import logger from "redux-logger";
+import init from "./mixin/init";
+
+const middlewares = "WXA_ENV" !== "production" ? [logger] : [];
+
+wxa.use(watchPlugin);
+wxa.use(wxaRedux, {
+  reducers: combineReducers({ userInfo, location }),
+  //middlewares: middlewares
+});
+
+@App
+export default class Main {
+  mixins = [init];
+
+  globalData = {
+    location: null,
+    userInfo: {
+      nickname: "",
+      avatarUrl: ""
+    },
+  };
+
+  onLaunch() {}
+}
+</script>
+
+<config>
+{
+  "pages": [
+    "pages/index",
+    "pages/location",
+    "pages/center",
+    "pages/login",
+    "pages/pet_circle/publish",
+    "pages/pet_circle/index",
+    "pages/pet_circle/detail",
+    "pages/pet_circle/hot_subject",
+    "pages/pet_circle/personal",
+    "pages/appointment/appoint_status",
+    "pages/appointment/list",
+    "pages/appointment/detail",
+    "pages/appointment/time_selector",
+    "pages/appointment/appoint_item"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#ffff",
+    "navigationBarTextStyle":"black",
+    "navigationBarTitleText":"萌兽医馆",
+    "backgroundColor": "#ffff"
+  },
+  "tabBar":{
+    "color":"#666",
+    "selectedColor":"#333",
+    "backgroundColor":"#fff",
+    "borderStyle":"black",
+    "list":[
+      {
+        "pagePath":"pages/index",
+        "text":"首页",
+        "iconPath":"./assets/images/index.png",
+        "selectedIconPath":"./assets/images/index_selected.png"
+      },
+      {
+        "pagePath":"pages/appointment/list",
+        "text":"预约",
+        "iconPath":"./assets/images/reserve.png",
+        "selectedIconPath":"./assets/images/reserve_selected.png"
+      },
+      {
+        "pagePath":"pages/pet_circle/index",
+        "text":"爱宠圈",
+        "iconPath":"./assets/images/sns.png",
+        "selectedIconPath":"./assets/images/sns_selected.png"
+      },
+      {
+        "pagePath":"pages/center",
+        "text":"我的",
+        "iconPath":"./assets/images/center.png",
+        "selectedIconPath":"./assets/images/center_selected.png"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于获取当地门店提供的服务"
+    }
+  }
+}
+</config>
+
+<style lang="scss">
+@import "./css/main.scss";
+@import "./wux-weapp/dist/styles/index.wxss";
+</style>

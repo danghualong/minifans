@@ -1,0 +1,324 @@
+<script>
+import { Page } from "@wxa/core";
+
+@Page
+export default class Index {
+  mapState = {
+    location: state => state.location
+  };
+
+  data = {
+    imgUrls: [
+      "https://images.unsplash.com/photo-1551334787-21e6bd3ab135?w=640",
+      "https://images.unsplash.com/photo-1551214012-84f95e060dee?w=640",
+      "https://images.unsplash.com/photo-1551446591-142875a901a1?w=640"
+    ],
+    'state':'开始'
+  };
+
+  onLoad() {}
+
+  onUnload() {}
+
+  onReady(){
+    var that=this;
+    this.ctx = wx.createInnerAudioContext();
+    console.log(this.ctx);
+
+    this.ctx.src="https://tts.hjapi.com/en-us/EF6C7F5E8DEBB53BB63C05EE8DF2F39A5008159AB900F8B1009BEF8C3D404D4D5EA59FFD0161BA95CE7F7B08E996676F"; 
+    this.ctx.onPlay(()=>{
+      that.setData({
+        'state':'停止'
+      })
+    });
+    this.ctx.onStop(()=>{
+      that.setData({
+        'state':'开始'
+      })
+    });
+  }
+
+  onShowSelectLocation() {
+    this.$router.push("/pages/location");
+  }
+
+  onRedirectToFuncYueyue() {
+    this.$router.switch("/pages/reserve");
+  }
+
+  onRedirectToFuncQuan() {
+    this.$router.switch("/pages/sns");
+  }
+
+  onRedirectToStores(){
+    this.$router.push("/pages/store/index");
+  }
+
+  changeState(){
+    if(this.data.state=='开始'){
+      this.ctx.play();
+    }else{
+      this.ctx.stop(); 
+    }
+    
+  }
+}
+</script>
+
+<config>
+{
+    "navigationBarTitleText": "首页",
+    "usingComponents": {
+        "wux-button": "../wux-weapp/dist/button/index"
+     }
+}
+</config>
+
+<template>
+  <view class="container">
+    <view class="location blank_left_right" catch:tap="onShowSelectLocation">
+      <view class="location_icon">
+        <image src="/assets/images/location-50px.png" mode="widthFix" class="icon"></image>
+      </view>
+      <view class="location_city text_desc">[切换] {{location.cityName}}</view>
+      <view class="location_hospital text_desc">
+        {{location.hospitalName}}
+        <text class="text_gray" wx:if="{{location.distance}}">距您{{location.distance}}</text>
+      </view>
+    </view>
+
+    <view class="banner">
+      <swiper indicator-dots="{{true}}" indicator-color="#999" indicator-active-color="#333" autoplay="{{true}}">
+        <block wx:for="{{imgUrls}}">
+          <swiper-item>
+            <image src="{{item}}" class="slide-image" mode="widthFix"></image>
+          </swiper-item>
+        </block>
+      </swiper>
+    </view>
+
+    <view class="function_entry background_main blank space_top">
+      <view class="separate">
+        <view class="liner border_top"></view>
+        <view class="text text_desc">线上预约，到店免排队</view>
+        <view class="liner border_top"></view>
+      </view>
+      <view class="entry_item" catch:tap="onRedirectToFuncYueyue">
+        <view class="icon">
+          <image src="/assets/images/func-yuyue.png" mode="widthFix"></image>
+        </view>
+        <view class="info">
+          <view class="title text_main text_middle">在线预约，到店支付</view>
+          <view class="desc text_desc">可预约美容洗澡，疾病诊疗</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="function_entry background_main blank space_top">
+      <view class="entry_item" catch:tap="onRedirectToFuncQuan">
+        <view class="icon">
+          <image src="/assets/images/func-quan.png" mode="widthFix"></image>
+        </view>
+        <view class="info">
+          <view class="title text_main text_middle">爱宠萌图</view>
+          <view class="desc text_desc">点此进入，欢迎分享</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section blank_left_right activity_list">
+      <view class="title text_main text_middle">当前优惠活动</view>
+      <view class="content">
+        <navigator class="article_summary" url="/pages/activity/detail?id=1">
+          <view class="title text_desc wux-ellipsis">萌兽医馆携手皇家，免费送58元粮。先到先得，数量有限</view>
+          <view class="date text_gray">（2019-05-01）</view>
+        </navigator>
+        <navigator class="article_summary" url="/pages/activity/detail?id=2">
+          <view class="title text_desc wux-ellipsis">【与它同行】动物救助活动开启啦</view>
+          <view class="date text_gray">（2019-05-01）</view>
+        </navigator>
+        <navigator class="article_summary" url="/pages/activity/detail?id=3">
+          <view class="title text_desc wux-ellipsis">【养宠无忧】优惠大促，最多优惠</view>
+          <view class="date text_gray">（2019-05-01）</view>
+        </navigator>
+      </view>
+    </view>
+
+    <view class="section blank_left_right store_list">
+      <view class="title text_main text_middle">我们的门店</view>
+      <view class="content">
+        <view class="store_summary">
+          <image src="/assets/images/store1.png" mode="widthFix"></image>
+        </view>
+        <view class="store_summary">
+          <image src="/assets/images/store2.png" mode="widthFix"></image>
+        </view>
+        <view class="store_summary">
+          <image src="/assets/images/store3.png" mode="widthFix"></image>
+          <view class="more text_normal" catch:tap="onRedirectToStores">查看全部门店</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <wux-button block type="balanced" bindtap="changeState" >{{state}}</wux-button> 
+    </view>
+    <view class="bottom text_gray">Copyright © 2018-2019 qishengvet.com</view>
+  </view>
+</template>
+
+<style lang="scss">
+.location {
+  width: 100%;
+  height: 80rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: #ffffff;
+
+  .location_icon {
+    width: 40rpx;
+    height: 40rpx;
+
+    .icon {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .location_city {
+    margin-left: 10rpx;
+  }
+
+  .location_hospital {
+    flex: 1 1 0;
+    text-align: right;
+  }
+}
+
+.banner {
+  min-width: 150px;
+  overflow: hidden;
+}
+
+.function_entry {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  .separate {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40rpx;
+
+    .liner {
+      flex: 1 1 0;
+    }
+    .text {
+      margin: 0 10rpx;
+    }
+  }
+
+  .entry_item {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .icon {
+      width: 100rpx;
+      height: 100rpx;
+      margin-left: 100rpx;
+      margin-right: 60rpx;
+    }
+    .info {
+      flex: 1 1 0;
+
+      .title {
+        margin-bottom: 10rpx;
+      }
+    }
+  }
+}
+.section {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.section > .title {
+  margin-bottom: 20rpx;
+}
+.section > .content {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.activity_list {
+  margin-top: 40rpx;
+}
+.article_summary {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2rpx solid #ccc;
+  padding: 20rpx 0;
+
+  .title {
+    white-space: nowrap;
+  }
+  .date {
+    white-space: nowrap;
+  }
+}
+.store_list{
+   margin-top: 40rpx;
+}
+.store_list .content{
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.store_summary{
+  width:30%;
+  position: relative;
+}
+.store_summary>.more{
+  width:100%;
+  height:100%;
+  background-color: #ccc;
+  opacity: 0.8;
+  position: absolute;
+  left:0;
+  top:0;
+  color:#fff;
+  font-weight: bold;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.bottom{
+  margin-top: 80rpx;
+  text-align: center;
+  line-height: 80rpx;
+}
+</style>
