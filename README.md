@@ -179,4 +179,4 @@ npm -v
 >     - `wxa2 cli -a login`: 登录微信，`preview`和`upload`都需要登录微信后操作
 
 ## License
-MIT &copy; 王吉
+BPH &copy; 党华龙
