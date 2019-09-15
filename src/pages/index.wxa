@@ -11,7 +11,7 @@ export default class Index {
     var that=this;
   }
   onStartGame(){
-    this.$router.push("/pages/store/index");
+    this.$router.push("/pages/center");
   }
 }
 </script>
@@ -27,8 +27,8 @@ export default class Index {
 
 <template>
   <view class="container">
-    <view class="space_top img_cover">
-      <image src="/assets/images/board.png" mode="widthFix"></image>
+    <view class="space_top h_center_container img_cover">
+      <image class="img" src="/assets/images/board3.png" mode="aspectFit"></image>
     </view>
     <view class="space_top intro">
       <text>简介:在棋盘上每隔一子跳到空白处,跳过的那个子，自动从棋盘消除，最后剩余的棋子越少，得分越高</text>
@@ -43,7 +43,7 @@ export default class Index {
 
 <style lang="scss">
 @import "../css/main.scss";
-.title{
+.h_center_container{
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -60,5 +60,10 @@ export default class Index {
 .bottom{
   margin-bottom:20rpx;
   text-align: center;
+}
+.img_cover{
+}
+.img{
+  width:90%;
 }
 </style>

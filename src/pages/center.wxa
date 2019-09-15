@@ -1,27 +1,246 @@
 <script>
-import { Page } from "@wxa/core";
+import { Page,toast } from "@wxa/core";
+import { $wuxBackdrop } from '../wux-weapp/dist/index'
+
+const RULES=[[1,2,4],[1,3,6],[2,4,7],[2,5,9],
+    [3,5,8],[3,6,10],[4,5,6],[4,7,11],
+    [4,8,13],[5,8,12],[5,9,14],[6,10,15],
+    [6,9,13],[7,8,9],[8,9,10],[12,13,14],
+    [11,12,13],[13,14,15],
+    [12,8,5],[11,7,4],
+    [13,8,4],[13,9,6],[13,12,11],
+    [14,13,12],[14,9,5],
+    [9,5,2],[9,8,7],
+    [10,6,3],[10,9,8],
+    [8,5,3],[7,4,2],[6,3,1],[6,5,4],[4,2,1],[15,14,13],[15,10,6]];
+
+const SCORES=[0,10,20,30,40,50,60,70,80,90,100,120,150,200];
 
 @Page
 export default class Center {
-  data = {};
+  data = {
+    chesses:[],
+    selectedIndex:0,
+    bestScore:0,
+    showResult:false,
+    currentScore:0
+  };
 
-  onLoad() {}
+  onLoad() {
+    this.$wuxBackdrop = $wuxBackdrop()
+    this.initBoard();
+  }
+
+  initBoard(){
+    let _chesses=[
+      {
+        'index':1,
+        'isOn':false,
+        'left':315,
+        'top':1
+      }
+    ];
+    let index=1;
+    for(let i=2;i<6;i++){
+      for(let j=0;j<i;j++){
+        index++;
+        _chesses.push({
+          index:index,
+          isOn:true,
+          left:316-(i-1-2*j)*78,
+          top:1+(i-1)*136
+        });
+      }
+    }
+    this.setData({
+      chesses:_chesses,
+      currentScore:0
+    });
+  }
+
+  onSelected(e){
+    let selectedIndex=e.currentTarget.dataset.id;
+    let chess=this.data.chesses[selectedIndex-1];
+    this.setData({
+      selected:chess,
+      selectedIndex:selectedIndex
+    });
+    //console.log(this.data.selectedIndex);
+  }
+
+  onMove(e){
+    let toIndex=e.currentTarget.dataset.id;
+    let chesses=this.data.chesses;
+    let step=RULES.find(p=>p[0]==this.data.selectedIndex &&p[2]==toIndex && chesses[p[1]-1].isOn);
+    if(step){
+      chesses[step[1]-1].isOn=false;
+      chesses[step[0]-1].isOn=false;
+      chesses[step[2]-1].isOn=true;
+      let score=this.calculate(chesses);
+      this.setData({
+        chesses:chesses,
+        selectedIndex:0,
+        currentScore:score
+      });
+      //判断是否无棋可走
+      if(this.isOver(chesses)){
+        if(this.data.bestScore<this.data.currentScore){
+          this.setData({
+            bestScore:this.data.currentScore
+          });
+        }
+        this.onShowBackdrop();
+      }
+    }
+    
+  }
+
+  onReleaseBackdrop(){
+    this.$wuxBackdrop.release();
+    this.setData({
+      showResult:false
+    });
+    this.initBoard();
+  }
+
+  onShowBackdrop(){
+    this.$wuxBackdrop.retain();
+    this.setData({
+      showResult:true
+    });
+  }
+
+  onShare(){
+
+  }
+
+  isOver(chesses){
+    let canMove=false;
+    for(let i in chesses){
+      let p=chesses[i];
+      if(p.isOn){
+        let step=RULES.find(q=>q[0]==p.index&& !chesses[q[2]-1].isOn && chesses[q[1]-1].isOn);
+        if(!step){
+          console.log("no more steps");
+        }else{
+          return false;
+        }
+      }
+    }
+    return !canMove;
+  }
+
+  calculate(chesses){
+    let count=0;
+    chesses.forEach(p=>{
+      if(!p.isOn){
+        count++
+      }
+    });
+    return SCORES[count-1];
+  }
+
 }
 </script>
 
 <config>
 {
-    "navigationBarTitleText": "个人中心",
+    "navigationBarTitleText": "14子棋",
     "usingComponents": {
-         "wux-button": "../wux-weapp/dist/button/index"
+         "wux-button": "../wux-weapp/dist/button/index",
+         "wux-backdrop": "../wux-weapp/dist/backdrop/index",
+         "wux-landscape": "../wux-weapp/dist/landscape/index"
      }
 }
 </config>
 
 <template>
-  <view class="container"></view>
+  <wux-backdrop id="wux-backdrop" />
+  <view class="container h_center">
+    <view class="space_top score_view">
+      <view class="space_left">
+        <text class="score_accent">{{currentScore}}</text>
+      </view>
+    </view>
+    <view class="space_top page_container">
+      <view class="board">
+        <image class="bg" src="/assets/images/board2.png" mode="widthFix"></image>
+      </view>
+      <view class="chess_view" style="left:{{selected.left}}rpx;top:{{selected.top}}rpx" hidden="{{selectedIndex==0}}">
+        <image class="chess" src="/assets/images/chess_selected.png"/>
+      </view>
+      <view class="chess_view" style="left:{{item.left}}rpx;top:{{item.top}}rpx;" wx:for={{chesses}} wx:key="index">
+        <view>
+          <image class="chess" src="/assets/images/chess_empty.png" hidden="{{item.isOn}}" bindtap="onMove" data-id="{{item.index}}"/>
+          <image class="chess" src="/assets/images/chess.png" hidden="{{!item.isOn || selectedIndex==item.index}}" bindtap="onSelected" data-id="{{item.index}}"/>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="result_container" hidden="{{!showResult}}">
+    <view class="container bg_transparent">
+      <view class="space h_center">
+        <text class="score">当前得分:{{currentScore}}</text>
+      </view>
+      <view class="space h_center">
+        <wux-button type="balanced" bind:click="onReleaseBackdrop">再来一次</wux-button>
+      </view>
+      <view class="space h_center">
+        <wux-button type="balanced" bind:click="onShare">分享</wux-button>
+      </view>
+      <view class="space h_center">
+        <text class="score">最高得分:{{bestScore}}</text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <style lang="scss">
+@import "../css/main.scss";
+.h_center{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.page_container{
+  position:relative;
+  width:94%;
+}
+.score_view{
+  width:100%;
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+}
+
+.chess_view{
+  position:absolute;
+  .chess{
+    height:78rpx;
+    width:78rpx;
+  }
+}
+
+.result_container{
+  z-index:1001;
+  position:fixed;
+  width:100%;
+  top:60%;
+  bottom:0;
+  left:0;
+}
+
+.bg_transparent{
+  background:rgba(0,0,0,0);
+}
+.score{
+  color:#fff;
+}
+
+.score_accent{
+  font-size:100rpx;
+  font-weight:bold;
+}
+
 
 </style>

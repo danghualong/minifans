@@ -35,30 +35,13 @@ export default class Main {
 {
   "pages": [
     "pages/index",
-    "pages/location",
-    "pages/center",
-    "pages/login",
-    "pages/pet_circle/publish",
-    "pages/pet_circle/index",
-    "pages/pet_circle/detail",
-    "pages/pet_circle/hot_subject",
-    "pages/pet_circle/personal",
-    "pages/appointment/appoint_status",
-    "pages/appointment/list",
-    "pages/appointment/detail",
-    "pages/appointment/time_selector",
-    "pages/appointment/appoint_item"
+    "pages/center"
   ],
   "window": {
     "navigationBarBackgroundColor": "#ffff",
     "navigationBarTextStyle":"black",
-    "navigationBarTitleText":"萌兽医馆",
+    "navigationBarTitleText":"***",
     "backgroundColor": "#ffff"
-  },
-  "permission": {
-    "scope.userLocation": {
-      "desc": "你的位置信息将用于获取当地门店提供的服务"
-    }
   }
 }
 </config>
