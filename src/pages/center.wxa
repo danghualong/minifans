@@ -179,16 +179,16 @@ export default class Center {
   </view>
   <view class="result_container" hidden="{{!showResult}}">
     <view class="container bg_transparent">
-      <view class="space h_center">
+      <view class="space_top_left_right result_item">
         <text class="score">当前得分:{{currentScore}}</text>
       </view>
-      <view class="space h_center">
-        <wux-button type="balanced" bind:click="onReleaseBackdrop">再来一次</wux-button>
+      <view class="space_top_left_right result_item">
+        <wux-button full type="balanced" bind:click="onReleaseBackdrop">再来一次</wux-button>
       </view>
-      <view class="space h_center">
-        <wux-button type="balanced" bind:click="onShare">分享</wux-button>
+      <view class="space_top_left_right result_item">
+        <wux-button full type="balanced" open-type="share">分享</wux-button>
       </view>
-      <view class="space h_center">
+      <view class="space_top_left_right result_item">
         <text class="score">最高得分:{{bestScore}}</text>
       </view>
     </view>
@@ -202,10 +202,12 @@ export default class Center {
   flex-direction:column;
   align-items:center;
 }
+
 .page_container{
   position:relative;
   width:94%;
 }
+
 .score_view{
   width:100%;
   display:flex;
@@ -228,6 +230,11 @@ export default class Center {
   top:60%;
   bottom:0;
   left:0;
+  .result_item{
+    display:flex;
+    flex-direction:column;
+    padding:0 20%;
+  }
 }
 
 .bg_transparent{
@@ -235,6 +242,7 @@ export default class Center {
 }
 .score{
   color:#fff;
+  text-align:center;
 }
 
 .score_accent{

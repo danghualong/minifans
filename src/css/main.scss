@@ -149,6 +149,11 @@ image {
         margin: 0 $border-blank-size;
     }
 
+    &_top_left_right {
+        margin: none;
+        margin: $border-blank-size $border-blank-size 0 $border-blank-size;
+    }
+
     & {
         margin: $border-blank-size;
     }
