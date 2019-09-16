@@ -37,7 +37,7 @@ export default class Index {
     <view class="space_top operation_container">
       <wux-button block type="balanced" bind:click="onStartGame">开始游戏</wux-button>
     </view>
-    <view class="space_top bottom text_gray">Copyright © 2018-2019 github.com</view>
+    <view class="bottom text_gray">Copyright © 2018-2019 github.com</view>
   </view>
 </template>
 
@@ -58,6 +58,9 @@ export default class Index {
 }
 
 .bottom{
+  position:absolute;
+  bottom:20rpx;
+  width:100%;
   margin-bottom:20rpx;
   text-align: center;
 }
