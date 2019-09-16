@@ -1,5 +1,0 @@
-[0914/181321:INFO:exception_record.cc(518)] [QB]Process ID: 9624 Type: 2
-[0914/181323:INFO:http_cache_transaction.cc(72)] IgnoreZeroCacheError: 0
-[0914/181326:WARNING:webmediaplayer_impl.cc(341)] Using MultibufferDataSource
-[0914/181336:ERROR:latency_info.cc(158)] RenderWidgetHostImpl::OnSwapCompositorFrame, LatencyInfo vector size 108 is too big.
-[0914/181440:ERROR:ffmpeg_demuxer.cc(1510)] media::FFmpegDemuxer::OnReadFrameDone result=-541478725 IsMaxMemoryUsageReached=0
